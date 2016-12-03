@@ -12,6 +12,7 @@ class pinHtml
    protected $children;
    protected $attributes;
    protected $tag;
+   protected $id='';
 
    // for addChild parameter
    const ReturnChild=true;   
@@ -20,6 +21,11 @@ class pinHtml
    // for render parameter
    const InnerHtml=true;
    const AllHtml=false; // is default
+
+	private function insertAt(array $arr, $at, $newElem){
+		array_splice($arr , $at, 0, $newElem);
+		return $arr;
+	}
    
    private function closeTag($opentag){
        $ret='';
@@ -30,7 +36,47 @@ class pinHtml
        return $ret;
    }
    
+	/**
+	* get the id of outer tag 
+	* @since 0.1.4
+	* 
+	* @return string id or '' if none
+	*/   
+   public function getId(){
+   		return $this->id;	
+   }
+   
    /**
+   * Find element with given @id
+   * Returned element can be main element or one of its children, or null if not found
+   * With id is meant the html id attribute
+   * @since 0.1.4
+   * 
+   * @param string $idfind the id to find
+   * 
+   * @return pinHtml or null if not found
+   */
+   public function getById($idfind){
+ 		
+   		if($idfind==$this->id){
+			return $this;
+		}	
+		else{
+			foreach($this->children as $child){
+				if(is_a($child, 'pinHtml')){
+					$childWithId = $child->getById($idfind);
+					if($childWithId) return $childWithId;							
+				}
+			}
+		}
+		return null;
+   }
+   
+   
+   /**
+   * create anonymous instance of pinHtml
+   * @since 0.1
+   * 
    * @return new instance of pinHtml
    */
    public static function make($tag=''){
@@ -38,7 +84,9 @@ class pinHtml
        return $html;
    }
    
-   
+   /**
+   * @since 0.1
+   */
    public function __construct($tag){
        $this->tag=$tag;
        $this->children=array();
@@ -94,6 +142,34 @@ class pinHtml
        $this->children[]=$child;
        return $returnChild ? $child : $this; // allows for fluent interfaces    
    }
+   /**
+   * Add child to begin
+   * @since 0.1.4
+   * 
+   * @param mixed $child either pinHtml; a valid html structure or string; a text
+   * @param boolean $returnChild if true a reference to the new child is returned if false (default) a reference to the pinHtml itself
+   * 
+   * @return mixed, string or pinHtml depending on type of child, also see $returnChild parameter
+   */
+   public function prependChild($child, $returnChild = false){
+   		array_unshift($this->children, $child);
+   		return $returnChild ? $child : $this;
+   }
+   /**
+   * Add child at given index
+   * Element which resides at given index and higher are pushed up
+   * @since 0.1.4
+   * 
+   * @param mixed $child either pinHtml; a valid html structure or string; a text
+   * @param boolean $returnChild if true a reference to the new child is returned if false (default) a reference to the pinHtml itself
+   * 
+   * @return mixed, string or pinHtml depending on type of child, also see $returnChild parameter
+   */
+   public function insertChildAt($child, $at, $returnChild = false){
+   		$this->children = $this->insertAt($this->children , $at, $child);
+		return $returnChild ? $child : $this;   	
+   }
+   
    
    /**
    * Comfort function to add a Br
@@ -114,7 +190,10 @@ class pinHtml
    * @return pinHtml itself
    */
    public function __call($name,$args=array(null)){
-       $this->attributes[$name]=$args[0];    
+       $this->attributes[$name]=$args[0];
+       if($name=='id'){
+			$this->id = $args[0];	   	
+	   }    
        return $this;
    }
    

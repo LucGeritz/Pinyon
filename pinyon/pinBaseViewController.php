@@ -14,6 +14,14 @@ abstract class pinBaseViewController extends pinBaseController
     protected function prefix(){
 		return false;
 	}
+	/**
+	* return the view object
+	* @since 0.1.4
+	* @return pinBaseView the view associated with this 
+	*/
+	public function getView(){
+		return $this->view;	
+	}
 	
     /**
 	* Does this controller have a associated view?

@@ -12,9 +12,10 @@ require_once(PIN_INCLUDE.'pinError.php');
 */
 class pinAutoloader{
 
-     const DEPFILE='dep.php';
-     private static $dirs=array(PIN_INCLUDE);
-     private static $mods=array();
+     const DEPFILE = 'dep.php';
+     private static $dirs = array(PIN_INCLUDE);
+     private static $mods = array();
+     private static $throwException = true;
      
      /**
      * Throws exception
@@ -30,7 +31,12 @@ class pinAutoloader{
             throw new Exception($msg);         
          }
      }
-     
+
+	 public static function throwExceptionWhenNotFound($throw){
+	 	self::$throwException = $throw;
+	 		 	
+	 }     
+	 
      /**
 	 * get dir based on module name
 	 * 
@@ -138,6 +144,7 @@ class pinAutoloader{
      
      /**
      * Try to load a class, checks directories as set with loadAutoloadDirs
+     * @note throwing an exception can be surpressed by pinAutoloader::throwExceptionWhenNotFound(false)
      * @throw  'class xxx could not be loaded'
      *  
      * @param string $class name of class
@@ -145,7 +152,7 @@ class pinAutoloader{
      */
      public static function Autoload($class){
         if(!self::_autoload($class)){
-            self::raise(pinBasalError::E001.$class);
+        	if(self::$throwException) self::raise(pinBasalError::E001.$class);
         }     
      } 
      /**

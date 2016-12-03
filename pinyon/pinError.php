@@ -26,7 +26,11 @@ class pinError{
     * @return void
     */
     public static function onShutDown(){
+      
       $err = error_get_last();
+      
+      if(defined('PIN_DUMPERROR')) print_r($err);
+      
       if (($err['type'] & 101) || $err['type']==256) {   // dec101 = bin1100101 and are the fatal errors we're interested in, see http://www.php.net/manual/en/errorfunc.constants.php
            echo pig::inTag('strong',"An unexpected error occurred");
            $prefixedMsg=self::prefixMsg($err['message'],$err['file'],'','',$err['line']);

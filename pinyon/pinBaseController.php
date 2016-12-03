@@ -69,11 +69,12 @@ abstract class pinBaseController extends pinConfigurable
     /**
     * Start the controller
     * Is called if no action is specified. Otherwise startXXX is called, XXX being the name of the action. 
-    * 
+    * @since 0.1
     * @param array $params mixed array allows for a generic way of passing parameters to the controller. pinWebApp will pass the $_GET this way (as $params['get'])
     * @return void
     */
     public abstract function start($params=array());
+
 
     /**
     * Return whether user needs admin rights for this controller
@@ -98,14 +99,23 @@ abstract class pinBaseController extends pinConfigurable
 
     /**
     * Return whether this controller can only run in debug mode 
-    * Debug mode means PIN_DEBUG==true
-    * 
+    * @note Debug mode means PIN_DEBUG==true
+    * @since 0.1
     * @return boolean true if route only allowed in debug
     */
     public function debugOnly(){
         return false;
     }
-    
+
+	/**
+	* return the reason for canceling
+	* @since 0.1.4
+	* @return int cancelreason code, 0 = not canceled.
+	*/
+	public function cancelReason(){
+		return 0;	
+	}    
+	
     public function __construct($action){
 		
 		parent::__construct();

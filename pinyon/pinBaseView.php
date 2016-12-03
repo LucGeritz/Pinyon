@@ -12,7 +12,19 @@ class pinBaseView extends pinConfigurable
 {
 	protected $app;
     protected $content='';
-
+	protected $description;
+	
+	/**
+	* Get description of view embedded in meta-description tag. 
+	* Typically you'd do that in the layout file. Example echo $controller->hasView() ? $controller->getView()->getDescription() : '';
+	* the view should set description by $this->description 
+	* @since 0.1.4
+	* @return string if description filled a meta tag is returned, orherwise ''
+	*/
+	public function getDescription(){
+		if(empty($this->description)) return '';
+		return '<meta name="description" content="'.$this->description.'">';
+	}
     /**
     * Render content
     * 

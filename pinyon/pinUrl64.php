@@ -18,7 +18,12 @@ class pinUrl64
     static function compress($addpar=array(),$exlpar=array()){
  
         $app=pinReg::i()->app;    
-        $url=$app->self;
+        if($app->semanticurls){
+			$url=$app->fullurlnoparms;	
+		}
+		else{
+        	$url=$app->self;
+        }
         
         $query=array_merge($app->urlquery,$addpar);
         if(count($query)>0){

@@ -2,7 +2,7 @@
 /**
 * Represents an inclusion of a css link
 * @note type of inclusion defaults to **csslink**
-* @config cssdirpublic string path to prefix to file
+* @config cssdir string path to prefix to file
 * @config cssext string extension to append to file
 *
 * @package Pinyon.Incl

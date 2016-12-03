@@ -12,6 +12,12 @@ class pig
 
 ########################
 # Pig = Pinyon General #
+#   /\  /\             #
+#   \/__\/             #
+#   (o__o)             #
+#   /('')\             #
+#   \  ~ /             #
+#                      #
 ########################
 
 /**
@@ -120,6 +126,7 @@ public static function urlParams2Str($params=array())
 */
 public static function copy_get($prefix,$excludes=array()){
     $get=$_GET;
+    $newgeturl='';
     foreach($get as $key=>$value){
         if(!in_array($key,$excludes)){
             $newgeturl.=($newgeturl==''?'':'&').$prefix.$key.'='.$value;
@@ -469,20 +476,35 @@ public static function stripRed($source,$chars=' '){
   
   // get sting element from array without knowing if it exists
   // source http://stackoverflow.com/questions/1960509/how-to-avoid-isset-and-empty
-  static function getStrElement($array, $index, $default = null) {
+  static function getStrElement($array, $index, $default = '') {
     if (isset($array[$index]) && strlen($value = trim($array[$index])) > 0) {
         return get_magic_quotes_gpc() ? stripslashes($value) : $value;
     } else {
         return $default;
     }
   }
-  
-  static function getElement($array, $index, $default=null){
-  	if(isset($array[$index])){
-		return $array[$index];
+  /**
+  * get element from array wich might not exist
+  * @param mixed $array array to search in
+  * @param mixed $index key in array or array of keys in which case the first matching is returned
+  * @param mixed $default value returned if no match found, defaults to null
+  * 
+  * @return the element with matched key or $default if no match
+  */
+  public static function getElement($array, $index, $default=null){
+  	if(!is_array($index)){
+		$index = array($index);	
 	}
-	else{
-		return $default;
-	}
+	
+	$val=$default;
+	foreach($index as $key){
+		if(isset($array[$key])){
+			$val=$array[$key];
+			break;
+		}
+	}  	
+	
+	return $val;
   }
+  
 }

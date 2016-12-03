@@ -2,9 +2,11 @@
 /**
 * Class for logging
 * Singleton, access through i()
-* @config (class) logger IpinLogger
-* @config (class) msgprefix string: the text used as prefix for each message
-* @config (class) dologging boolean: true means logging is on, false logging is off
+* 
+* @since 0.1
+* @config logger IpinLogger
+* @config msgprefix string: the text used as prefix for each message
+* @config dologging boolean: true means logging is on, false logging is off
 * 
 * @package Pinyon.Log
 * @see <a href="http://www.tigrez.nl">Pinyon Pine</a>
@@ -78,4 +80,3 @@ class pinLog extends pinConfigurable
 	} 
     
 }
-?>

@@ -9,14 +9,16 @@ require_once(PIN_INCLUDE.'pinConfigurable.php');
 * - authenabled: boolean true yes enabled, based on useauth and authisoff settings 
 * - currentlang: string the current language
 * - fullurl string: the full url  
+* - fullurlnoparms: the full url without query parms
 * - initialaction string: action as requested
 * - initialroutename string: routename as requested
 * - ip string ip address from caller (not trustworthy!)
 * - prevurl string: the previous url 
 * - routename string: routename taken
-* - self string: current script (not file) same as $_SERVER['PHP_SELF']; 
+* - self string: current script (not file) same as $_SERVER['PHP_SELF'];
+* - semanticurls: boolean are semantic urls used, set to false, is overwritten by pinSURLWebApp to true 
 * - urlpath string: url path
-* - urlpathplusroute string: url path plus route but no other params
+* - urlpathplusroute string: url path plus route but no other params, !!makes no sense if sematicurls are used
 * - urlquery array: param=>value (is, of course, same as $_GET)
 * - urlquerystr string: query as string
 * pinWebApp also adds the settings from pinRouter.
@@ -32,12 +34,13 @@ require_once(PIN_INCLUDE.'pinConfigurable.php');
 */
 class pinWebApp extends pinConfigurable{
 	
-    protected $settings;
+    protected $settings=array('semanticurls'=>false);
 	
 	private $loginController;
     private $routename;
     private $action;
-	
+	private $get;
+		
 	private function log($msg){
 		if($this->settings['dologging']){
 			pinLog::i()->log($msg);
@@ -54,14 +57,15 @@ class pinWebApp extends pinConfigurable{
     
     private function getIp(){
 		$ip='';
-		if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARTDED_FOR'] != '') {
+		if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
     		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
 		} 
 		else {
     		$ip = $_SERVER['REMOTE_ADDR'];
 		}
 		return $ip;
-	}    
+	}
+	
     /**
     * Pseudo-Event called just after transaction has started
     * 
@@ -99,12 +103,20 @@ class pinWebApp extends pinConfigurable{
         return $content;
         // please override
     }    
-    
+
+	protected function getGet(){
+		return $this->get;
+	}    
+	
+	protected function setGet(array $get){
+		$this->get = $get;	
+	}
+	
 	protected function additionalSettings(){
 		
-		$this->settings['prevurl']=   $_SESSION['prevurl'];
-        $this->settings['prevroute']= $_SESSION['prevroute'];
-        $this->settings['prevaction']=$_SESSION['prevaction'];
+		$this->settings['prevurl']=   pig::getStrElement($_SESSION,'prevurl','');
+        $this->settings['prevroute']= pig::getStrElement($_SESSION,'prevroute','');
+        $this->settings['prevaction']=pig::getStrElement($_SESSION,'prevaction','');
         $fullurl=pig::fullUrl();
         
 		
@@ -114,7 +126,7 @@ class pinWebApp extends pinConfigurable{
         $this->settings['urlquery']=$_GET;
 		$this->settings['urlquerystr']=parse_url($fullurl,PHP_URL_QUERY);
 		
-        $this->settings['self']=htmlentities($_SERVER['PHP_SELF']);
+        $this->settings['self']=htmlentities(pig::getStrElement($_SERVER,'PHP_SELF',''));
         $this->settings['ip']=$this->getIp();
           
         }
@@ -128,7 +140,7 @@ class pinWebApp extends pinConfigurable{
         
         $auth=null;
      
-        if( $this->settings['authrouter']){
+        if( pig::getStrElement($this->settings,'authrouter','' )){
             $auth=$this->toObject($this->settings['authrouter'],'IpinAuthRouter');
         }
         else{
@@ -137,10 +149,11 @@ class pinWebApp extends pinConfigurable{
         pinReg::i()->auth=$auth;
         
    }            
-
+	
+  	
    protected function setTransObject(){
        
-       $trans=$this->toObject($this->settings['translator'],'IpinTranslator');
+       $trans=$this->toObject(pig::getStrElement($this->settings,'translator',''),'IpinTranslator');
 
        pinReg::i()->trans=$trans;
        return $trans;
@@ -151,10 +164,11 @@ class pinWebApp extends pinConfigurable{
 		// settings are read by baseclass pinConfigurable
         parent::__construct();
         
+        
         if(!is_array($this->settings)) trigger_error(pinBasalError::E007,E_USER_ERROR);
         $this->settings=array_merge($this->settings,pinConfig::someClass('pinRouter')->getSettings());
 		
-		if($this->settings['markdown']){
+		if(pig::getStrElement($this->settings,'markdown','')){
 			pinReg::i()->markdown=$this->toObject($this->settings['markdown'],'IpinMarkdown');
 		}
 		
@@ -167,10 +181,10 @@ class pinWebApp extends pinConfigurable{
         if($this->settings['translator']){
              $trans=$this->setTransObject();
              
-             $lang=$_GET['lang'];
+            $lang=pig::getStrElement($_GET,'lang','');
 			
             if(!$lang){
-				$lang=pig::dft($_SESSION['lang'],'');
+				$lang=pig::getStrElement($_SESSION,'lang','');
                 // empty string becomes default language
                 if(!$lang){
                     $lang=pinConfig::someClass('pinTrans')->defaultlang;
@@ -188,15 +202,23 @@ class pinWebApp extends pinConfigurable{
 		pinReg::i()->app=$this;      
 	}
        
-    /// redirect to given url
-    /// @param string $tourl url to redirect to
-    /// @return void
+       
+    /**
+    * redirect to given url
+	* @deprecated use pinUrl::i()->redirect(), supports semantic urls
+	* @param string $tourl url to redirect to
+	*/
     public function redirect($tourl){
         $this->log('Redirecting to '.$tourl);
         header("Location: ".$tourl);
     	die();
     }
-    
+	/**
+	* redirect based on route
+	* @deprecated use pinUrl::i()->redirectRouteBasedUrl(), supports semantic urls
+	* @param string $route
+	* @param array $params url query parms
+	*/    
     public function redirectRoute($route,$params=array()){
         $url=$this->settings['self'].'?r='.$route;
         if(count($params)>0){
@@ -215,6 +237,7 @@ class pinWebApp extends pinConfigurable{
     */
 	public function __get($var)
 	{
+		if(!isset($this->settings[$var])) return '';
 		$val=$this->settings[$var];
 		return pinConfig::resolve($val);
 	}
@@ -240,17 +263,18 @@ class pinWebApp extends pinConfigurable{
 	
 	/**
     * Start the controller which implements a given route 
-    * 
+    * When starting succeeds it includes the controller 
     * @param string $routename string name of a route which is resolved to a controller to start
-    * @return 
     */
-    public function start($routename=''){
-	
+    public function start(){
+				
+		$this->get = $_GET;
+		
         $this->onStart();
         	
-		$this->log("Requested route by user: $routename");
-		
-		$params=array();
+        $routename = pig::getStrElement($this->get, 'r');
+        	
+		$this->log("Requested by user: $routename");
 		
         // get routename/action
         if($routename) $this->splitRouteParm($routename);
@@ -268,10 +292,10 @@ class pinWebApp extends pinConfigurable{
 		if($controller->onBegin($this->action)){
 			
         	if($this->action){
-            	$controller->{'start'.$this->action}(array('get'=>$_GET));            
+            	$controller->{'start'.$this->action}(array('get'=>$this->get));            
         	}
         	else{
-    			$controller->start(array('get'=>$_GET));
+    			$controller->start(array('get'=>$this->get));
 			}
 			
 		}
@@ -292,4 +316,3 @@ class pinWebApp extends pinConfigurable{
 	    $this->onEnd();	
 	}
 }
-?>

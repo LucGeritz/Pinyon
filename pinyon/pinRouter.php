@@ -26,14 +26,14 @@ class pinRouter{
     }
     
     private static function splitRouteName(&$route,&$action){
-        list($route,$action)=explode('/',$route);
+        list($route,$action)=explode('/',"$route/",2); // added slash is stupid hack to avoid 'unknown offset'
         if($action) $action = ucfirst(strtolower($action));
     }
     
     private static function getErrorClassAndRouteName(&$classname,&$routename,&$action){
         $routename=pinConfig::thisClass()->notfoundroute;
         
-        self::splitRouteName($routename,$action,$bc);
+        self::splitRouteName($routename,$action);
                 
 	    $classname=$routename.pinConfig::thisClass()->controllersuffix;
 		
@@ -60,7 +60,7 @@ class pinRouter{
         if(($action && !method_exists($controller,self::aCTIONmETHODpREFIX.$action)) 
            || ($controller->hasView() && !$controller->viewIsLoaded())
            ){
-            // action not implemented
+            // action not implemented or view does not exist
             unset($controller);
             self::getErrorClassAndRouteName($classname,$routename,$action);
             $controller=self::instantiateController($classname,$routename,$action);

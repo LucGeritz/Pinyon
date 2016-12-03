@@ -4,6 +4,7 @@
 * Methods concerning the loaded user should check if a user is indeed already loaded. getError() should return msg if not.
 * Methods which can return an error should set getError-result to "" if no error occurs. 
 * @package Pinyon.Route
+* @since 0.1
 * @see <a href="http://www.pinyonpine.com">Pinyon Pine</a>
 * @author <a href="http://www.tigrez.nl">Tigrez Software/ Luc Geritz</a>
 */
@@ -14,6 +15,7 @@ Interface IpinAuthBack{
       
      /**
      * Change a password for the *loaded* user
+     * @since 0.1
      * 
      * @param string $pwold the old password
      * @param string $pwnew1 the new password
@@ -24,6 +26,7 @@ Interface IpinAuthBack{
 
     /**
     * Force a new password to be set for the *loaded* user
+    * @since 0.1
     * 
     * @param string $pwnew1
     * @return boolean true if succeeded, false if not in which case getError returns error message
@@ -33,12 +36,15 @@ Interface IpinAuthBack{
     /**
     * Retrieve text of last error empty string if none   
     * Guideline: empty message once it is read
+    * @since 0.1
+    * 
     * @return string message
     */
     public function getError(); 
     
     /**
 	* Check a password of the *loaded* user
+	* @since 0.1
 	* 
 	* @param string $pw
 	* @param boolean $pwishashed
@@ -51,6 +57,7 @@ Interface IpinAuthBack{
 	* Check validity of user and if exists load it.
 	* If user exists load it! Very different from doesUserExist
 	* If user is blocked it should still load
+	* @since 0.1
 	* 
 	* @param string $user user (name) to be checked
 	* @return boolean, true means valid
@@ -61,6 +68,7 @@ Interface IpinAuthBack{
     /**
 	* Check if *some* user exists (either blocked or unblocked)
 	* Does *not* load the user, see also loadUser
+	* @since 0.1
 	* 
 	* @param string $user user name to check existance of
 	* @return boolean, true exists
@@ -70,6 +78,7 @@ Interface IpinAuthBack{
     /**
 	* Check if a user is loaded
 	* If user is loaded it might still be blocked!
+	* @since 0.1
 	* 
 	* @return boolean, true is a user is loaded
 	*/
@@ -77,7 +86,8 @@ Interface IpinAuthBack{
 
     /**
 	* Check if a user is loaded which is not blocked
-	* 
+	* @since 0.1
+	*  
 	* @note Still doesn't mean the user is logged in!
 	* @return boolean, true if user is loaded which is not blocked, false if no user or a blocked user is loaded
 	*/
@@ -86,6 +96,7 @@ Interface IpinAuthBack{
     /**
 	* Check if *some* or *loaded* user is blocked
 	* Should ony be called if it exists. If it does not exist should return 'true' (is blocked) 
+	* @since 0.1
 	* 
 	* @param string  $user default null meaning check *loaded* user
 	* @return boolean true means blocked
@@ -94,6 +105,7 @@ Interface IpinAuthBack{
  
     /**
 	* Block the *loaded* user
+	* @since 0.1
 	* 
 	* @return boolean true if succeeded, false should fill errormsg
 	*/
@@ -101,14 +113,16 @@ Interface IpinAuthBack{
 
     /**
 	* unBlock the *loaded* user
-	* 
+	* @since 0.1
+	*  
 	* @return boolean true if succeeded, false should fill errormsg
 	*/
     public function unblockUser();
     
     /**
 	* Get admin status of *some* or *loaded* user
-	* 
+	* @since 0.1
+	*  
 	* @param string $name user name default null means *loaded* user
 	* @return true user is admin
 	*/
@@ -116,7 +130,8 @@ Interface IpinAuthBack{
     
     /**
 	* load another user
-	* 
+	* @since 0.1
+	*  
 	* @param string $name user name
 	* 
 	* @return boolean; true if user exists (can still be blocked!)
@@ -125,14 +140,16 @@ Interface IpinAuthBack{
 
     /**
 	* get *loaded* user's name
-	* 
+	* @since 0.1
+	*  
 	* @return string name
 	*/
     public function getName($name=null);
     
     /**
 	* get *some* or *loaded* user's email
-	* 
+	* @since 0.1
+	*  
 	* @param string $name user name default null means *loaded* user
 	* @return string email
 	*/
@@ -140,7 +157,8 @@ Interface IpinAuthBack{
     
     /**
 	* get *loaded* user's id
-	* 
+	* @since 0.1
+	*  
 	* @return mixed the id
 	*/
     public function getId();
@@ -148,7 +166,8 @@ Interface IpinAuthBack{
     /**
 	* Retrieve a textual description of the rules for user name
 	* Typical use would be in a form where user defines/changes user name
-	* 
+	* @since 0.1
+	*  
 	* @return string description
 	*/
     public function getNameRules();
@@ -157,13 +176,15 @@ Interface IpinAuthBack{
 	* Retrieve a textual description of the rules for password
 	* Typical use would be in a form where user defines/changes password
 	* 
+	* @since 0.1 
 	* @return string description
 	*/
     public function getPwRules();
     
     /**
 	* retrieve hashed password of *loaded* user
-	* 
+	* @since 0.1
+	*  
 	* @return string
 	*/
     public function getHashedPw();
@@ -171,10 +192,11 @@ Interface IpinAuthBack{
     /**
 	* get a random password
 	* Make sure it's according your own pw rules!
-	* 
+	* @since 0.1
+	*  
 	* @return string the password
 	*/
     public function getNewPw(); 
      
 }
-?>
+
