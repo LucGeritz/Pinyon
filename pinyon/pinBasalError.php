@@ -18,4 +18,4 @@ class pinBasalError {
     const E008='Invalid request';     
     const E009='Not authorized for this request';
     const E010='Class file could not be found: ';
-}
+   }
