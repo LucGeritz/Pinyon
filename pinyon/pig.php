@@ -162,7 +162,7 @@ public static function getTopClass($class){
   public static function checkEmail($email) {
      if(preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/",
                $email)){
-    list($username,$domain)=split('@',$email);
+    list($username,$domain)=explode('@',$email);
     if(!checkdnsrr($domain,'MX')) {
       return false;
     }
@@ -451,4 +451,20 @@ public static function stripRed($source,$chars=' '){
 	$port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":".$_SERVER["SERVER_PORT"]);
 	return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
    }
+  public static function fullUrlNoParms($url='')
+  {
+  	if(!$url) $url=pig::fullUrl();
+  	$parsed_url=parse_url($url);
+  	
+	$scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : ''; 
+    $host     = isset($parsed_url['host']) ? $parsed_url['host'] : ''; 
+    $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : ''; 
+    $user     = isset($parsed_url['user']) ? $parsed_url['user'] : ''; 
+    $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : ''; 
+    $pass     = ($user || $pass) ? "$pass@" : ''; 
+    $path     = isset($parsed_url['path']) ? $parsed_url['path'] : ''; 
+  
+    return "$scheme$user$pass$host$port$path"; 
+  }
+
 }

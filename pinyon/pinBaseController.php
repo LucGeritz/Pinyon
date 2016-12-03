@@ -26,6 +26,25 @@ abstract class pinBaseController extends pinConfigurable
 
     }    	
 	
+	/**
+	* pseudo-event called before controller start() or startAction()
+	* 
+	* @return boolean true means continue by calling start(xxx)
+	*/
+    public function onBegin(){
+		return true;
+    }    	
+
+    /**
+	* pseudo-event called when controller has been processed by pinWebApp
+	* 
+	* @return boolean true means continue
+	*/
+    public function onStart(){
+		return true;
+    }    	
+	
+	
     /**
     * Return content build up by the controller.
     * This basecontroller returns an empty string (no content)

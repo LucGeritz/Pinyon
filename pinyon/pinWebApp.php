@@ -97,9 +97,11 @@ class pinWebApp extends pinConfigurable{
 		$this->settings['prevurl']=   $_SESSION['prevurl'];
         $this->settings['prevroute']= $_SESSION['prevroute'];
         $this->settings['prevaction']=$_SESSION['prevaction'];
-        $fullurl=pig::fullUrl();;
+        $fullurl=pig::fullUrl();
+        
 		
 		$this->settings['fullurl']=$fullurl;
+		$this->settings['fullurlnoparms']=pig::fullUrlNoParms($fullurl);
         $this->settings['urlpath']=parse_url($fullurl, PHP_URL_PATH);
         $this->settings['urlquery']=$_GET;
 		$this->settings['urlquerystr']=parse_url($fullurl,PHP_URL_QUERY);
@@ -254,14 +256,18 @@ class pinWebApp extends pinConfigurable{
         $this->settings['action']=$this->action;
         
 		$this->log('Suggested route by router: '.$this->settings['routename'].' '.$this->settings['action']);
-        
-        if($this->action){
-            $controller->{'start'.$this->action}(array('get'=>$_GET));            
-        }
-        else{
-    		$controller->start(array('get'=>$_GET));
-		}
 
+		if($controller->onBegin()){
+			
+        	if($this->action){
+            	$controller->{'start'.$this->action}(array('get'=>$_GET));            
+        	}
+        	else{
+    			$controller->start(array('get'=>$_GET));
+			}
+			
+		}
+		
 		$content = $controller->getContent();
         
         $controller->onEnd();

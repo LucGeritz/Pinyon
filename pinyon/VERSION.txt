@@ -1,7 +1,15 @@
-0.1.1
+0.1.2
 
-pinWebReq class
-   removed from framework
-pinBaseRequest
-   removed from framework   
+pig:
+- replaced split by explode
+- added fullUrlNoParms
 
+pinBaseController:
+added pseudo event onBegin. 
+
+pinWebApp
+calls controller's onBegin. Only calls start() (or startXxx) if onBegin returns true.
+It does process content though..
+- adds 'fullurlnoparms' to settings
+
+  
