@@ -62,7 +62,12 @@ abstract class pinBaseViewController extends pinBaseController
         return $this->app->routename.$this->app->viewsuffix;
     }    
     
-    /// constructor
+    /**
+	* Constructor
+	* @param String $action the action with which route is called
+	* 
+	* @return
+	*/
     public function __construct($action=''){
 
 		parent::__construct($action);

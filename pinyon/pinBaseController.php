@@ -22,7 +22,7 @@ abstract class pinBaseController extends pinConfigurable
 	* 
 	* @return void
 	*/
-    public function onEnd(){
+    public function onEnd($action=''){
 
     }    	
 	
@@ -31,7 +31,7 @@ abstract class pinBaseController extends pinConfigurable
 	* 
 	* @return boolean true means continue by calling start(xxx)
 	*/
-    public function onBegin(){
+    public function onBegin($action=''){
 		return true;
     }    	
 

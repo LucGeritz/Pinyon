@@ -11,7 +11,7 @@ class pinError{
     
     private static function maybelog($msg,$fatal=false){
 		if(class_exists('pinLog')){
-			pinLog::i()->log($prefixedMsg,$fatal);
+			pinLog::i()->log($msg,$fatal);
 		}
 	}
 	

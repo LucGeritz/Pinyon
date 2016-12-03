@@ -73,7 +73,7 @@ class pinAuthFront extends pinConfigurable implements IpinAuthFront{
 	}
     
     public function __construct(){
- 
+		 
         parent::__construct();
     }
 
@@ -142,6 +142,12 @@ class pinAuthFront extends pinConfigurable implements IpinAuthFront{
     */
     public function getMessage(){
 		return $this->msg;
+	}
+    /**
+	* @see IpinAuthFront
+    */
+    public function setMessage($msg){
+		$this->msg=$msg;
 	}
     /**
     * @see IpinAuthFront

@@ -51,7 +51,7 @@ class pinTextLogger extends pinConfigurable implements IpinLogger {
            fclose($filehandle);
         }
     }
-    
+
     public function setMsgPrefix($prefix){
         $this->msgprefix=$prefix;
     }

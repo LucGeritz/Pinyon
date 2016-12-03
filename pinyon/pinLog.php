@@ -44,8 +44,22 @@ class pinLog extends pinConfigurable
     }        
     
     public function log($msg,$fatal=false){
-        $this->logger->log($msg,$fatal);
+		if(is_array($msg)){
+			foreach($msg as $k=>$v){
+					if(!is_array($v)) $v = "$k -> $v"; 
+					$this->log($v,$fatal);
+			}
+		}
+		else{
+			$this->logger->log($msg,$fatal);	
+		}
     }
+    
+    public function Debug($msg){
+		if(PIN_DEBUG){
+			$this->log($msg);
+		}	
+	}
     
     /**
     * get instance of pinLog

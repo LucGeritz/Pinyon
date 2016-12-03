@@ -9,7 +9,7 @@
 * @config (class) viewdir string: where are the view classes stored
 * @config (class) controllersuffix string: what is added to a route name to resolve the controller class
 * @config (class) viewsuffix: string: what is added to a route name to resolve the view class
-*
+* @config (class) ipclosedexemption string: ip which is allowed to continue in case of closed 
 * @package Pinyon.Route
 * @see <a href="http://www.pinyonpine.com">Pinyon Pine</a>
 * @author <a href="http://www.tigrez.nl">Tigrez Software/ Luc Geritz</a>
@@ -96,8 +96,13 @@ class pinRouter{
 		
         // closed or default..
 		if($app->isclosed){
-			$routename=pinConfig::thisClass()->closedroute;
-			} 
+			if(!$app->ipclosedexemption || ($app->ipclosedexemption!=$app->ip)){
+				$routename=$app->closedroute;	
+			}
+			else{
+				if (!$routename) $routename=pinConfig::thisClass()->defaultroute;
+			}
+		}
 		else{
 			if (!$routename) $routename=pinConfig::thisClass()->defaultroute;
 		}

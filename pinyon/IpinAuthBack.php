@@ -9,6 +9,9 @@
 */
 Interface IpinAuthBack{
 
+     const PW_IS_HASHED=true;
+     const PW_IS_NOT_HASED=false;
+      
      /**
      * Change a password for the *loaded* user
      * 
@@ -52,6 +55,7 @@ Interface IpinAuthBack{
 	* @param string $user user (name) to be checked
 	* @return boolean, true means valid
 	*/
+    
     public function loadUser($user);
     
     /**

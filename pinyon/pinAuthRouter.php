@@ -196,14 +196,14 @@ class pinAuthRouter extends pinConfigurable implements IpinAuthRouter
                     	{
                         	// passw was invalid, generalize to creds - error
                         	$this->log('Creds invalid: '.$trans->t($this->_authback->GetError()));
-                        	$this->authdata['msg'] = $this->_authfront->getMsgForCredError();
+                        	$this->_authfront->setMessage($this->_authfront->getMsgForCredError());
                         	$reason="Password wrong";
                     	}
                 	}
             	}
             	else{
                 	$this->log('Creds invalid: '.$trans->t($this->_authback->GetError()));
-                	$this->authdata['msg'] = $this->_authfront->getMsgForCredError();
+                	$this->_authfront->setMessage($this->_authfront->getMsgForCredError());
                 	$reason="User name illegal or user blocked";
             	}
 
@@ -213,7 +213,7 @@ class pinAuthRouter extends pinConfigurable implements IpinAuthRouter
                 	if($needsAdmin){
                     	$this->log('Route requires admin rights');
                     	if(!$this->_authback->isAdmin()){
-                        	$this->authdata['msg'] = $this->_authfront->getMsgForAdminReqError();
+                        	$this->_authfront->setMessage($this->_authfront->getMsgForAdminReqError());
                         	$reason='User is no admin';
                         	$this->routename = $this->_loginroute;
                     	}
@@ -225,7 +225,7 @@ class pinAuthRouter extends pinConfigurable implements IpinAuthRouter
         	}
             else{
             	// no user found\
-            	$this->authdata['msg'] = '';
+            	$this->_authfront->setMessage('');
             	$reason='No user found or user empty';
             	$this->routename = $this->_loginroute;
         	}
@@ -235,8 +235,9 @@ class pinAuthRouter extends pinConfigurable implements IpinAuthRouter
             $this->routename=$this->_riskroute;
         }
         
-        $this->saveData($this->loggedIn);
         
+        $this->saveData($this->loggedIn);
+                
         $this->log('Suggested route for auth: '.(!$this->routename ? 'none' : $this->routename)." (Reason: $reason)");
 		
         $this->onAfterAuth();

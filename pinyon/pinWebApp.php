@@ -70,7 +70,15 @@ class pinWebApp extends pinConfigurable{
     protected function onStart(){
        // please override
     }
-    
+	/**
+    * Pseudo-Event called after onBegin denied access to start (i.e. returned false)
+    * Any communication as to why start is canceled can be done by properties or methods of the controller, e.g. by a cancelCode.
+    * @param pinBaseController $ctrl
+    * @return void
+    */
+    protected function onCanceled($ctrl){
+		// please override
+	}
     /**
     * Pseuso-event called just before transaction is finished
     * Call parent in override
@@ -257,7 +265,7 @@ class pinWebApp extends pinConfigurable{
         
 		$this->log('Suggested route by router: '.$this->settings['routename'].' '.$this->settings['action']);
 
-		if($controller->onBegin()){
+		if($controller->onBegin($this->action)){
 			
         	if($this->action){
             	$controller->{'start'.$this->action}(array('get'=>$_GET));            
@@ -267,10 +275,13 @@ class pinWebApp extends pinConfigurable{
 			}
 			
 		}
+		else{
+			$this->onCanceled($controller);
+		}
 		
 		$content = $controller->getContent();
         
-        $controller->onEnd();
+        $controller->onEnd($this->action);
          
         $content=$this->onBeforeRender($content);
         

@@ -71,6 +71,9 @@ interface IpinAuthFront{
     */
     public function getPassword();
     
+    public function getMessage();
+    
+    public function setMessage($msg);
     /**
 	* load the data the user provided
 	* @note should be called before any of the other methods
@@ -86,7 +89,7 @@ interface IpinAuthFront{
 	*/
 	public function eraseData();
 	/**
-	* save the user provide data
+	* save the user provided data
 	* 
 	* @return
 	*/

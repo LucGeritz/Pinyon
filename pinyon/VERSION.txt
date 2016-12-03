@@ -1,15 +1,47 @@
-0.1.2
-
-pig:
-- replaced split by explode
-- added fullUrlNoParms
-
-pinBaseController:
-added pseudo event onBegin. 
+0.1.3
 
 pinWebApp
-calls controller's onBegin. Only calls start() (or startXxx) if onBegin returns true.
-It does process content though..
-- adds 'fullurlnoparms' to settings
+---------
+Ctrl.onBegin passes action
+Ctrl.onEnd passes action
+New pseudo-event: WebApp.onCanceled, this is called when ctrl.onBegin
+returns false. As parameter it passes the controller.
+Default implementation of onCanceled does nothing..
 
-  
+pinBaseController
+-----------------
+onBegin needs parameter action (default '')
+onEnd needs parameter action (default '')
+
+pinRouter
+---------
+new setting: ipclosedexemption. 
+  This ip address is allowed to start routes even 
+  when the site is closed ( isclosed in pinWebApp
+  set to true). Basicly  now you  can  close  the 
+  site "for the rest of the world".
+
+pinError
+--------
+bugfix, fatal error message wasn't logged, fixed
+
+pinLog
+------
+Msg can be array now as well. Is logged including key
+Added Debug() method.
+  Debug should only log if PIN_DEBUG is true
+
+IpinAuthFront
+-------------
+GetMessage / SetMessage in interface
+
+pinAuthFront
+------------
+SetMessage implemented
+(GetMessage already existed but not used and not in interface)
+The message set should appear in login window
+
+pig
+---
+GetStrElement added
+GetElement added

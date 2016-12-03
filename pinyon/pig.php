@@ -466,5 +466,23 @@ public static function stripRed($source,$chars=' '){
   
     return "$scheme$user$pass$host$port$path"; 
   }
-
+  
+  // get sting element from array without knowing if it exists
+  // source http://stackoverflow.com/questions/1960509/how-to-avoid-isset-and-empty
+  static function getStrElement($array, $index, $default = null) {
+    if (isset($array[$index]) && strlen($value = trim($array[$index])) > 0) {
+        return get_magic_quotes_gpc() ? stripslashes($value) : $value;
+    } else {
+        return $default;
+    }
+  }
+  
+  static function getElement($array, $index, $default=null){
+  	if(isset($array[$index])){
+		return $array[$index];
+	}
+	else{
+		return $default;
+	}
+  }
 }
